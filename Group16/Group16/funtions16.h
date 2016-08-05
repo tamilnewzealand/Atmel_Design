@@ -8,14 +8,14 @@
 void uart_init(unsigned int MYUBRR)
 {
 	// Set baud rate using register UBRR0H and UBRR0L
-	
 	UBRR0H = (unsigned char) (MYUBRR>>8);
 	UBRR0L = (unsigned char) MYUBRR;
 	
 	// Set frame format:
-	// 8 data, 1 stop bit, no paritiy bit
+	// 8 bit data format, 1 stop bit, no parity bit
+	UCSR0B|= (1<<TXEN0);				//enable transmitter
+	UCSR0C|= (1<<UCSZ00)|(1<<UCSZ01);	//8 bit data format
 	
-	//Enable Transmitter
 }
 void uart_transmit(uint8_t data )
 {
