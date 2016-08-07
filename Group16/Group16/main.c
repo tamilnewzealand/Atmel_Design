@@ -13,7 +13,7 @@
 
 int main( void )
 {
-	uart_init(unsigned int MYUBRR );
+	uart_init();
 	uint8_t TXBUF[] = {17, 23, 29, 37, 43, 53, 59, 67, 83, 97};
 	uint8_t txindex = 0;
 	uint8_t data;
