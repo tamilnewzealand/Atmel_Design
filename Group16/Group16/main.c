@@ -26,6 +26,5 @@ int main( void )
 		digit = data / 10;
 		uart_transmit(digit);
 		txindex++;
-		printf(data);
 	}
 }
