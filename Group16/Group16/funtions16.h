@@ -5,11 +5,11 @@
  * Author : ssit662
  */ 
 
-void uart_init()
+void uart_init(uint8_t myboard)
 {
 	// Set baud rate using register UBRR0H and UBRR0L
-	UBRR0H = 0;// (unsigned char) (BAUD>>8);
-	UBRR0L =103;// (unsigned char) BAUD;
+	UBRR0H =  (unsigned char) (myboard>>8);
+	UBRR0L = (unsigned char) myboard;
 	
 	// Set frame format:
 	// 8 bit data format, 1 stop bit, no parity bit
@@ -23,9 +23,9 @@ void uart_transmit(uint8_t data )
 	// Wait for empty transmit buffer
 	// Put data into buffer, sends the data
 	
-	while (!((1<<UDRE0) && UCSR0A)){
+	while (!((1<<UDRE0) && UCSR0A));
 		UDR0 = data;	
-	}
+	
 	
 	// you can put delay statement here
 }

@@ -13,7 +13,7 @@
 
 int main( void )
 {
-	uart_init();
+	uart_init(MYUBRR);
 	uint8_t TXBUF[] = {17, 23, 29, 37, 43, 53, 59, 67, 83, 97};
 	uint8_t txindex = 0;
 	uint8_t data;
@@ -26,6 +26,6 @@ int main( void )
 		digit = data / 10;
 		uart_transmit(digit);
 		txindex++;
-		printf(data);
+	//	printf(data);
 	}
 }
