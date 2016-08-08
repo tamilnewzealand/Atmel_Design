@@ -5,6 +5,11 @@
  * Author : ssit662
  */ 
 
+//For delay:
+#define F_CPU 16000000UL //clock speed
+#include <avr/io.h>
+#include <util/delay.h>
+
 void uart_init(uint8_t myboard)
 {
 	// Set baud rate using register UBRR0H and UBRR0L
@@ -28,4 +33,6 @@ void uart_transmit(uint8_t data )
 	
 	
 	// you can put delay statement here
+	_delay_ms(50);              // 50ms delay PER CALL! 
+								//(i.e. 16 x 50m = 0.8 seconds delay overall per number transmitted)
 }
