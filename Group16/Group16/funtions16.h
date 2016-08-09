@@ -8,8 +8,8 @@
 void uart_init(uint8_t myboard)
 {
 	// Set baud rate using register UBRR0H and UBRR0L
-	UBRR0H =  (unsigned char) (myboard>>8);
-	UBRR0L = (unsigned char) myboard;
+	UBRR0H =  0; //(unsigned char) (myboard>>8);
+	UBRR0L = 103; //(unsigned char) myboard;
 	
 	// Set frame format:
 	// 8 bit data format, 1 stop bit, no parity bit
