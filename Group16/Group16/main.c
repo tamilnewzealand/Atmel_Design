@@ -16,6 +16,6 @@ int main( void )
 	uart_init(MYUBRR);
 	while (1){
 		//read array
-		uart_transmit(0b00100101);
+		uart_transmit(0b00100111);
 	}
 }

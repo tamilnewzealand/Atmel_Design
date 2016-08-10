@@ -141,8 +141,8 @@ int main( void )
   c4:	0e 94 40 00 	call	0x80	; 0x80 <uart_init>
 	while (1){
 		//read array
-		uart_transmit(0b00100101);
-  c8:	85 e2       	ldi	r24, 0x25	; 37
+		uart_transmit(0b00100111);
+  c8:	87 e2       	ldi	r24, 0x27	; 39
   ca:	0e 94 50 00 	call	0xa0	; 0xa0 <uart_transmit>
 	}
   ce:	fc cf       	rjmp	.-8      	; 0xc8 <main+0x6>
