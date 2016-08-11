@@ -33,6 +33,6 @@ void uart_transmit(uint8_t data )
 	
 	
 	// you can put delay statement here
-	_delay_ms(50);              // 50ms delay PER CALL! 
+	//_delay_ms(50);              // 50ms delay PER CALL! 
 								//(i.e. 16 x 50m = 0.8 seconds delay overall per number transmitted)
 }
