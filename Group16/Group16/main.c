@@ -14,16 +14,18 @@
 
 int main( void )
 {
-	//convert decimal value to binary
+	//convert 10 bit input to decimal
 	
-	//filter out the first two bits to determine on which SSD to display
-	//check the bit after to determine if decimal point present
+	//convert decimal value to digits and record respective position
+	//record position of decimal point
 	
-	//convert last 4 bits to a single number in decimal
+	//convert decimal digit to binary
 	
-	//filter digits from the number (use % for 1000s, 100s and 10s and / for 1s)
+	//left shift a 0, the position (as 2 bits), whether the decimal point is present (0 or 1) and the 4 bit digit.
+		
+	//convert the created number to decimal
 	
-	//display the number correctly
+	//correctly input it in array (watch out for position)
 	
 	
 	
@@ -41,7 +43,7 @@ int main( void )
 		for(uint8_t i=0;i<4;i++) {
 			uint8_t variable = array[i];
 			uart_transmit(variable);
-			_delay_ms(250);
+			_delay_ms(4.1666);	//want to have it very low so it appears like a 4 digit number shown (around 2-3 milliseconds)
 		}
 		
 	}
