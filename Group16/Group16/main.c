@@ -12,9 +12,11 @@
 
 /* declare global variables here*/
 
-int main( void )
+int main(void)
 {
 	//convert 10 bit input to decimal
+	
+	//compute power
 	
 	//convert decimal value to digits and record respective position
 	//record position of decimal point
@@ -30,14 +32,20 @@ int main( void )
 	
 	
 	
-	uint8_t array[4] = {97,66,35,4};
+	uint8_t array[4] = {102,71,40,9};
 	//prints out 1,2,3,4 in sequence from left to right on SSD in order
 	//0d97 == 0110 0001
 	//0d66 == 0110 0110
 	//0d65 == 0010 0011
 	//0d4  == 0000 0100
 	
-	uart_init(MYUBRR);
+	//print out 6,7,8,9 in sequence from left to right on SSD in order
+	//0d102 == 0110 0110
+	//0d71  == 0100 0111
+	//0d40  == 0010 1000
+	//0d9   == 0000 1001
+	
+	uart_init(/*MYUBRR*/);
 	while (1){
 		//read array
 		for(uint8_t i=0;i<4;i++) {
