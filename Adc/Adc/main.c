@@ -12,7 +12,7 @@
 #define USART_BAUDRATE 9600
 #define UBRR_VALUE (((F_CPU / (USART_BAUDRATE * 16UL))) - 1)
 #define VREF 5
-#define POT 50000
+#define POT 50
 
 void USART0Init(void) {
 	
@@ -28,7 +28,7 @@ void USART0Init(void) {
 
 }
 
-int USART0SendByte(char u8Data, FILE *stream) {
+/*int USART0SendByte(char u8Data, FILE *stream) {
 	
 	if(u8Data == '\n') {
 		USART0SendByte('\r', stream);
@@ -40,10 +40,46 @@ int USART0SendByte(char u8Data, FILE *stream) {
 	// Transmit data
 	UDR0 = u8Data;
 	return 0;
+}*/
+
+int USART0SendByte(uint8_t data) {
+	
+	//wait while previous byte is completed
+	while(!(UCSR0A&(1<<UDRE0))){};
+	
+	// Transmit data
+	UDR0 = data;
+	return 0;
+}
+
+void USART0TransmitNumber(double value) {
+	
+	uint8_t digit;
+	digit = (uint8_t)value / 10;
+	digit |= (1 << 6);
+	digit |= (1 << 5);
+	digit &=~ (1 << 4);
+	USART0SendByte(digit);
+	
+	digit = (uint8_t)value % 10;
+	digit |= (1 << 6);
+	digit &=~ (1 << 5);
+	digit |= (1 << 4);
+	USART0SendByte(digit);
+	
+	value *= 10;
+	digit = (uint8_t)value & 10;
+	digit &=~ (1 << 6);
+	digit &=~ (1 << 5);
+	digit &=~ (1 << 4);
+	USART0SendByte(digit);
+	
+	USART0SendByte(0x0A);
+	
 }
 
 //set stream pointer
-FILE usart0_str = FDEV_SETUP_STREAM(USART0SendByte, NULL, _FDEV_SETUP_WRITE);
+//FILE usart0_str = FDEV_SETUP_STREAM(USART0SendByte, NULL, _FDEV_SETUP_WRITE);
 
 void InitADC() {
 	
@@ -69,7 +105,8 @@ uint16_t ReadADC(uint8_t ADCchannel) {
 }
 int main() {
 	
-	double vbg, potval;
+	//double vbg;
+	double potval;
 	//initialize ADC
 	
 	InitADC();
@@ -78,25 +115,27 @@ int main() {
 	USART0Init();
 	
 	//assign our stream to standart I/O streams
-	stdout=&usart0_str;
+	//stdout=&usart0_str;
 	
 	while(1) {
 		
 		//reading potentiometer value and recalculating to Ohms
 		potval=(double)POT/1024*ReadADC(0);
 		
-		//sending potentiometer avlue to terminal
-		printf("Potentiometer value = %u Ohm\n", (uint16_t)potval);
+		USART0TransmitNumber(potval);
 		
-		//reading band gap voltage and recalculating to volts
+		//sending potentiometer value to terminal
+		//printf("Potentiometer value = %u Ohm\n", (uint16_t)potval);
+		
+		/*//reading band gap voltage and recalculating to volts
 		
 		vbg=(double)VREF/1024*ReadADC(14);
 		//printing value to terminal
 		
-		printf("Vbg = %4.2fV\n", vbg);
+		printf("Vbg = %4.2fV\n", vbg);*/
 		
 		//approximate 1s
-		_delay_ms(1000);
+		_delay_ms(5);
 	
 	}
 }

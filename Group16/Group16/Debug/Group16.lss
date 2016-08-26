@@ -17,15 +17,15 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY, DEBUGGING
   6 .debug_abbrev 0000015a  00000000  00000000  000003ae  2**0
                   CONTENTS, READONLY, DEBUGGING
-  7 .debug_line   0000015c  00000000  00000000  00000508  2**0
+  7 .debug_line   0000015b  00000000  00000000  00000508  2**0
                   CONTENTS, READONLY, DEBUGGING
   8 .debug_frame  00000054  00000000  00000000  00000664  2**2
                   CONTENTS, READONLY, DEBUGGING
-  9 .debug_str    000001d8  00000000  00000000  000006b8  2**0
+  9 .debug_str    000001be  00000000  00000000  000006b8  2**0
                   CONTENTS, READONLY, DEBUGGING
- 10 .debug_loc    0000007b  00000000  00000000  00000890  2**0
+ 10 .debug_loc    0000007b  00000000  00000000  00000876  2**0
                   CONTENTS, READONLY, DEBUGGING
- 11 .debug_ranges 00000020  00000000  00000000  0000090b  2**0
+ 11 .debug_ranges 00000020  00000000  00000000  000008f1  2**0
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -128,10 +128,10 @@ int main(void)
   b6:	00 d0       	rcall	.+0      	; 0xb8 <main+0x8>
   b8:	cd b7       	in	r28, 0x3d	; 61
   ba:	de b7       	in	r29, 0x3e	; 62
-	//correctly input it in array (watch out for position)
 	
-	
-	
+	/*
+	Note code is available for polling and interrupts on Nadeem's sheet (number 5).
+	*/
 	
 	uint8_t array[4] = {102,71,40,9};
   bc:	86 e6       	ldi	r24, 0x66	; 102

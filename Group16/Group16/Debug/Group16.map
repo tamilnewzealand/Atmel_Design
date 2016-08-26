@@ -365,18 +365,18 @@ END GROUP
  *(.debug_abbrev)
  .debug_abbrev  0x00000000      0x15a main.o
 
-.debug_line     0x00000000      0x15c
+.debug_line     0x00000000      0x15b
  *(.debug_line .debug_line.* .debug_line_end)
- .debug_line    0x00000000      0x15c main.o
+ .debug_line    0x00000000      0x15b main.o
 
 .debug_frame    0x00000000       0x54
  *(.debug_frame)
  .debug_frame   0x00000000       0x54 main.o
 
-.debug_str      0x00000000      0x1d8
+.debug_str      0x00000000      0x1be
  *(.debug_str)
- .debug_str     0x00000000      0x1d8 main.o
-                                0x20c (size before relaxing)
+ .debug_str     0x00000000      0x1be main.o
+                                0x1f2 (size before relaxing)
 
 .debug_loc      0x00000000       0x7b
  *(.debug_loc)
