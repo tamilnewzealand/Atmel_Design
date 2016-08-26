@@ -11,7 +11,6 @@
 #include <util/delay.h>
 #define USART_BAUDRATE 9600
 #define UBRR_VALUE (((F_CPU / (USART_BAUDRATE * 16UL))) - 1)
-#define VREF 5
 #define POT 50
 
 void USART0Init(void) {
@@ -27,20 +26,6 @@ void USART0Init(void) {
 	UCSR0B |= (1<<RXEN0)|(1<<TXEN0);
 
 }
-
-/*int USART0SendByte(char u8Data, FILE *stream) {
-	
-	if(u8Data == '\n') {
-		USART0SendByte('\r', stream);
-	}
-	
-	//wait while previous byte is completed
-	while(!(UCSR0A&(1<<UDRE0))){};
-	
-	// Transmit data
-	UDR0 = u8Data;
-	return 0;
-}*/
 
 int USART0SendByte(uint8_t data) {
 	
@@ -68,18 +53,15 @@ void USART0TransmitNumber(double value) {
 	USART0SendByte(digit);
 	
 	value *= 10;
-	digit = (uint8_t)value & 10;
+	digit = (uint8_t)value % 10;
 	digit &=~ (1 << 6);
-	digit &=~ (1 << 5);
+	digit |= (1 << 5);
 	digit &=~ (1 << 4);
 	USART0SendByte(digit);
 	
 	USART0SendByte(0x0A);
 	
 }
-
-//set stream pointer
-//FILE usart0_str = FDEV_SETUP_STREAM(USART0SendByte, NULL, _FDEV_SETUP_WRITE);
 
 void InitADC() {
 	
@@ -124,17 +106,6 @@ int main() {
 		
 		USART0TransmitNumber(potval);
 		
-		//sending potentiometer value to terminal
-		//printf("Potentiometer value = %u Ohm\n", (uint16_t)potval);
-		
-		/*//reading band gap voltage and recalculating to volts
-		
-		vbg=(double)VREF/1024*ReadADC(14);
-		//printing value to terminal
-		
-		printf("Vbg = %4.2fV\n", vbg);*/
-		
-		//approximate 1s
 		_delay_ms(5);
 	
 	}
