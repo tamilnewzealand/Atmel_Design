@@ -7,6 +7,7 @@
 
 #include <stdio.h>
 #include <avr/io.h>
+#include <math.h>
 #define F_CPU 16000000UL
 #include <util/delay.h>
 #define USART_BAUDRATE 9600
@@ -14,7 +15,6 @@
 #define POT 50
 
 void USART0Init(void) {
-	
 	// Set baud rate
 	UBRR0H = (uint8_t)(UBRR_VALUE>>8);
 	UBRR0L = (uint8_t)UBRR_VALUE;
@@ -24,11 +24,9 @@ void USART0Init(void) {
 	
 	//enable transmission and reception
 	UCSR0B |= (1<<RXEN0)|(1<<TXEN0);
-
 }
 
 int USART0SendByte(uint8_t data) {
-	
 	//wait while previous byte is completed
 	while(!(UCSR0A&(1<<UDRE0))){};
 	
@@ -38,7 +36,6 @@ int USART0SendByte(uint8_t data) {
 }
 
 void USART0TransmitNumber(double value) {
-	
 	uint8_t digit;
 	digit = (uint8_t)value / 10;
 	digit |= (1 << 6);
@@ -60,21 +57,17 @@ void USART0TransmitNumber(double value) {
 	USART0SendByte(digit);
 	
 	USART0SendByte(0x0A);
-	
 }
 
 void InitADC() {
-	
-	// Select Vref=AVcc
+	// Select Vref = AVcc
 	ADMUX |= (1<<REFS0);
 	
 	//set prescaller to 128 and enable ADC
 	ADCSRA |= (1<<ADPS2)|(1<<ADPS1)|(1<<ADPS0)|(1<<ADEN);
-
 }
 
 uint16_t ReadADC(uint8_t ADCchannel) {
-	
 	//select ADC channel with safety mask
 	ADMUX = (ADMUX & 0xF0) | (ADCchannel & 0x0F);
 	
@@ -85,29 +78,28 @@ uint16_t ReadADC(uint8_t ADCchannel) {
 	while( ADCSRA & (1<<ADSC) );
 	return ADC;
 }
-int main() {
-	
-	//double vbg;
-	double potval;
-	//initialize ADC
-	
-	InitADC();
-	//Initialize USART0
-	
-	USART0Init();
-	
-	//assign our stream to standart I/O streams
-	//stdout=&usart0_str;
-	
-	while(1) {
-		
-		//reading potentiometer value and recalculating to Ohms
-		potval=(double)POT/1024*ReadADC(0);
-		
-		USART0TransmitNumber(potval);
-		
-		_delay_ms(5);
-	
+
+uint16_t ReadADCAverage(uint8_t ADCchannel) {
+	double value = 0x00000000;
+	uint8_t i;
+	// Approximating 19 successive ADC Readings
+	for (i = 0; i < 19; i++) {
+		value += pow((ReadADC(ADCchannel)),(double)2);
 	}
+	value /= 19;
+	value = pow((value),(double)1/2);
+	return (uint16_t)value;
 }
 
+int main() {
+	double potval;
+	
+	InitADC();	
+	USART0Init();
+	
+	while(1) {
+		potval=(double)POT/1024*ReadADCAverage(0);
+		USART0TransmitNumber(potval);
+		_delay_ms(5);
+	}
+}
