@@ -6,13 +6,17 @@
  */ 
 
 #include <stdio.h>
-#include <avr/io.h>
 #include <math.h>
+#include <avr/io.h>
 #define F_CPU 16000000UL
 #include <util/delay.h>
 #define USART_BAUDRATE 9600
 #define UBRR_VALUE (((F_CPU / (USART_BAUDRATE * 16UL))) - 1)
-#define POT 50
+#define VREF 5
+#define V_Filter 0
+#define I_Filter_High 1
+#define I_Filter_Low 2
+#define Mid_Supply 5
 
 void USART0Init(void) {
 	// Set baud rate
@@ -36,17 +40,19 @@ int USART0SendByte(uint8_t data) {
 }
 
 void USART0TransmitNumber(double value) {
+	
 	uint8_t digit;
-	digit = (uint8_t)value / 10;
+	digit = (uint8_t)value % 10;
 	digit |= (1 << 6);
 	digit |= (1 << 5);
-	digit &=~ (1 << 4);
+	digit |= (1 << 4);
 	USART0SendByte(digit);
 	
+	value *= 10;
 	digit = (uint8_t)value % 10;
 	digit |= (1 << 6);
 	digit &=~ (1 << 5);
-	digit |= (1 << 4);
+	digit &=~ (1 << 4);
 	USART0SendByte(digit);
 	
 	value *= 10;
@@ -57,10 +63,11 @@ void USART0TransmitNumber(double value) {
 	USART0SendByte(digit);
 	
 	USART0SendByte(0x0A);
+	
 }
 
 void InitADC() {
-	// Select Vref = AVcc
+	// Select Vref to internal AREF
 	ADMUX |= (1<<REFS0);
 	
 	//set prescaller to 128 and enable ADC
@@ -79,27 +86,28 @@ uint16_t ReadADC(uint8_t ADCchannel) {
 	return ADC;
 }
 
-uint16_t ReadADCAverage(uint8_t ADCchannel) {
+uint16_t CalcRMS(uint8_t ADCchannel) {
 	double value = 0x00000000;
 	uint8_t i;
-	// Approximating 19 successive ADC Readings
-	for (i = 0; i < 19; i++) {
-		value += pow((ReadADC(ADCchannel)),(double)2);
+	uint16_t x;
+	// Approximating 64 successive ADC Readings
+	for (i = 0; i < 63; i++) {
+		x = ReadADC(ADCchannel);
+		value += (double)x * (double)x;
 	}
-	value /= 19;
-	value = pow((value),(double)1/2);
+	value = sqrt(value);
+	value /= 8;
 	return (uint16_t)value;
 }
 
 int main() {
-	double potval;
+	
+	double value;
 	
 	InitADC();	
 	USART0Init();
-	
 	while(1) {
-		potval=(double)POT/1024*ReadADCAverage(0);
-		USART0TransmitNumber(potval);
-		_delay_ms(5);
+		value = (double)VREF/1024*CalcRMS(V_Filter);
+		USART0TransmitNumber(value);
 	}
 }
