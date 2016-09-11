@@ -11,6 +11,7 @@
 int main(void) {
 	uint8_t i;
 	double value;
+	uint8_t temp;
 	InitADC();	
 	USART0Init();
 	while(1) {
