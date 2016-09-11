@@ -37,7 +37,10 @@ SUBDIRS :=
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS +=  \
-../main.c
+../adc.c \
+../algorithm.c \
+../main.c \
+../usart.c
 
 
 PREPROCESSING_SRCS += 
@@ -47,16 +50,28 @@ ASM_SRCS +=
 
 
 OBJS +=  \
-main.o
+adc.o \
+algorithm.o \
+main.o \
+usart.o
 
 OBJS_AS_ARGS +=  \
-main.o
+adc.o \
+algorithm.o \
+main.o \
+usart.o
 
 C_DEPS +=  \
-main.d
+adc.d \
+algorithm.d \
+main.d \
+usart.d
 
 C_DEPS_AS_ARGS +=  \
-main.d
+adc.d \
+algorithm.d \
+main.d \
+usart.d
 
 OUTPUT_FILE_PATH +=Adc.elf
 
@@ -72,6 +87,12 @@ LINKER_SCRIPT_DEP+=
 
 
 # AVR32/GNU C Compiler
+
+
+
+
+
+
 
 
 
