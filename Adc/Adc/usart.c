@@ -30,17 +30,30 @@ int USART0SendByte(uint8_t data) {
 
 void USART0TransmitNumber(double value, uint8_t type) {
 	uint8_t digit;
-	digit = (uint8_t)value % 10;
-	digit |= (1 << 6);
-	digit |= (1 << 5);
-	digit |= (1 << 4);
-	USART0SendByte(digit);
 	
-	value *= 10;
+	if (type == 0) USART0SendByte(0x70);
+	else if (type == 1) USART0SendByte(0x61);
+	else {
+		digit = (uint8_t)value % 10;
+		digit |= (1 << 6);
+		digit |= (1 << 5);
+		digit |= (1 << 4);
+		USART0SendByte(digit);
+	}
+	
+	if (type != 1) {
+		value *= 10;
+	}
 	digit = (uint8_t)value % 10;
-	digit |= (1 << 6);
-	digit &=~ (1 << 5);
-	digit &=~ (1 << 4);
+	if (type != 1) {
+		digit |= (1 << 6);
+		digit &=~ (1 << 5);
+		digit &=~ (1 << 4);
+	} else {
+		digit |= (1 << 6);
+		digit &=~ (1 << 5);
+		digit |= (1 << 4);
+	}
 	USART0SendByte(digit);
 	
 	value *= 10;

@@ -19,6 +19,7 @@
 
 volatile uint8_t isr_chan;
 volatile uint8_t count;
+volatile uint16_t offset;
 
 void InitADC();
 ISR(ADC_vect);
