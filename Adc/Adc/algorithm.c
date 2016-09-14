@@ -7,7 +7,7 @@
 
 #include "algorithm.h"
 
-double CalcRMS() {
+double CalcRMS(double peak) {
 	double value = 0x00000000;
 	uint8_t i;
 	for (i = 0; i < 63; i++) {
@@ -15,6 +15,8 @@ double CalcRMS() {
 	}
 	value = sqrt(value);
 	value /= 8;
+	value -= peak;
+	value *= ((double)106.6/(double)6.6)
 	return value;
 }
 

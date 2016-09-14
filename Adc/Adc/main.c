@@ -14,17 +14,17 @@ int main(void) {
 	InitADC();	
 	USART0Init();
 	while(1) {
-		value = CalcPeak(adc_amp_result);
+		value = CalcPeak();
 		for (i = 0; i < 599; i++) {
 			USART0TransmitNumber(value, 0);
 			_delay_ms(5);
 		}
-		value = CalcRMS(adc_vol_result);
+		value = CalcRMS(value);
 		for (i = 0; i < 599; i++) {
 			USART0TransmitNumber(value, 1);
 			_delay_ms(5);
 		}
-		value = CalcPower(adc_vol_result, adc_amp_result);
+		value = CalcPower();
 		for (i = 0; i < 599; i++) {
 			USART0TransmitNumber(value, 2);
 			_delay_ms(5);
