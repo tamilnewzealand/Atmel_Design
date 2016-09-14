@@ -15,8 +15,8 @@
 volatile uint16_t adc_vol_result[64];
 volatile uint16_t adc_amp_result[64];
 
-double CalcRMS();
+double CalcRMS(double peak);
 double CalcPeak();
-double CalcPower(double peak);
+double CalcPower();
 
 #endif /* ALGORITHM_H_ */

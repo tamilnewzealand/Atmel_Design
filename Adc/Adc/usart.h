@@ -10,7 +10,9 @@
 #define USART_H_
 
 #include <avr/io.h>
+#ifndef F_CPU
 #define F_CPU 16000000UL
+#endif
 #include <util/delay.h>
 
 #define USART_BAUDRATE 9600

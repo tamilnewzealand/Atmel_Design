@@ -10,6 +10,10 @@
 #define ADC_H_
 
 #include <avr/interrupt.h>
+#ifndef F_CPU
+#define F_CPU 16000000UL
+#endif
+#include <util/delay.h>
 #include "algorithm.h"
 
 #define VREF 3.3F

@@ -7,12 +7,14 @@
 
 #include "adc.h"
 #include "usart.h"
+#include "spi.h"
 	
 int main(void) {
 	uint8_t i;
 	double value;
 	InitADC();	
 	USART0Init();
+	SPI1Init();
 	while(1) {
 		value = CalcPeak();
 		for (i = 0; i < 599; i++) {
