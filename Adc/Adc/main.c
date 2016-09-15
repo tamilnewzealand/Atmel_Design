@@ -10,26 +10,27 @@
 #include "spi.h"
 	
 int main(void) {
-	uint8_t i;
-	double value;
-	InitADC();	
-	USART0Init();
+	//uint8_t i;
+	//double value;
+	//InitADC();	
+	//USART0Init();
 	SPI1Init();
 	while(1) {
-		value = CalcPeak();
-		for (i = 0; i < 599; i++) {
-			USART0TransmitNumber(value, 0);
-			_delay_ms(5);
-		}
-		value = CalcRMS(value);
-		for (i = 0; i < 599; i++) {
-			USART0TransmitNumber(value, 1);
-			_delay_ms(5);
-		}
-		value = CalcPower();
-		for (i = 0; i < 599; i++) {
-			USART0TransmitNumber(value, 2);
-			_delay_ms(5);
-		}
+		SPI1SendByte(0xFF);
+		//value = CalcPeak();
+		//for (i = 0; i < 599; i++) {
+			//USART0TransmitNumber(value, 0);
+			//_delay_ms(5);
+		//}
+		//value = CalcRMS(value);
+		//for (i = 0; i < 599; i++) {
+			//USART0TransmitNumber(value, 1);
+			//_delay_ms(5);
+		//}
+		//value = CalcPower();
+		//for (i = 0; i < 599; i++) {
+			//USART0TransmitNumber(value, 2);
+			//_delay_ms(5);
+		//}
 	}
 }
