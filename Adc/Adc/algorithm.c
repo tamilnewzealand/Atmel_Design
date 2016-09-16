@@ -17,6 +17,7 @@ double CalcRMS(double peak) {
 	value /= 8;
 	value -= peak;
 	value *= ((double)106.6/(double)6.6);
+	value *= (double)5.00/1024.0;
 	return value;
 }
 
@@ -29,6 +30,7 @@ double CalcPeak() {
 	value = sqrt(value);
 	value /= 8;
 	value *= sqrt(2);
+	value *= (double)5.00/1024.0;
 	return value;
 }
 

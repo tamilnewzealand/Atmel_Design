@@ -12,6 +12,11 @@
 #include <math.h>
 #include <avr/io.h>
 
+#define VREF 3.3F
+#define Mid_Supply 3
+#define I_Filter 2
+#define V_Filter 0
+
 volatile uint16_t adc_vol_result[64];
 volatile uint16_t adc_amp_result[64];
 
