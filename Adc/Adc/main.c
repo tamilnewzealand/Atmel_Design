@@ -12,24 +12,28 @@
 	
 int main(void) {
 	uint8_t i;
-	double value;
+	double ipk;
+	double vrms;
+	double power;
 	InitADC();
 	USART0Init();
 	SPI1Init();
 	while(1) {
-		value = CalcPeak();
+		ipk = CalcRMS(1);
+		ipk *= (double)sqrt(2)/(double)0.25;
 		for (i = 0; i < 199; i++) {
-			USART0TransmitNumber(value, 0);
+			USART0TransmitNumber(ipk, 0);
 			_delay_ms(5);
 		}
-		value = CalcRMS(value);
+		vrms = CalcRMS(0);
+		vrms *= (double)106.6/(double)6.6;
 		for (i = 0; i < 199; i++) {
-			USART0TransmitNumber(value, 1);
+			USART0TransmitNumber(vrms, 1);
 			_delay_ms(5);
 		}
-		value = CalcPower();
+		power = CalcPower();
 		for (i = 0; i < 199; i++) {
-			USART0TransmitNumber(value, 2);
+			USART0TransmitNumber(power, 2);
 			_delay_ms(5);
 		}
 	}

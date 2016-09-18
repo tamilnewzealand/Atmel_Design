@@ -17,10 +17,11 @@
 #define I_Filter 2
 #define V_Filter 0
 
-volatile uint16_t adc_vol_result[64];
-volatile uint16_t adc_amp_result[64];
+volatile uint16_t adc_vol_result[65];
+volatile uint16_t adc_amp_result[65];
+volatile double offset;
 
-double CalcRMS(double peak);
+double CalcRMS(uint8_t type);
 double CalcPeak();
 double CalcPower();
 
