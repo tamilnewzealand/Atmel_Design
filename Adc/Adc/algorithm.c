@@ -7,23 +7,13 @@
 
 #include "algorithm.h"
 
-void InitAlgorithm() {
-	cyclestate = 0;
-}
-
-void LoopCalc() {
+void VoltCalc() {
 	int32_t shiftedFCL;
-	static int32_t filteredV;
-	static int32_t filteredI;
 	
-	numberOfSamples++;                                   // Count number of times looped.
-
-	// Voltage Sense
-	lastSampleV=sampleV;                                 // Used for digital high pass filter
-	sampleV = analog_input_voltage;               // Read in raw voltage signal
-
+	lastSampleV=sampleV;
+	sampleV = analog_input_voltage;
 	
-	// See documentation here for tutorial on digital filters:
+	// Filters below are based on ideas from:
 	// http://openenergymonitor.org/emon/buildingblocks/digital-filters-for-offset-removal
 	
 	shiftedFCL = shifted_filterV + (int32_t)((sampleV-lastSampleV)<<8);
@@ -31,8 +21,11 @@ void LoopCalc() {
 	filteredV = (shifted_filterV+128)>>8;
 	
 	sumV += filteredV * filteredV;
-
-	// Current Sense
+}
+void AmpCalc() {
+	int32_t shiftedFCL;
+	
+	numberOfSamples++;
 	
 	lastSampleI=sampleI;
 	sampleI = analog_input_current;
@@ -43,24 +36,9 @@ void LoopCalc() {
 	
 	sumI += filteredI * filteredI;
 	sumP += filteredV * filteredI;
-
-	// -----------------------------------------------------------------------------------------
-	
-	last_cyclestate = cyclestate;
-	if (filteredV>0) cyclestate = 1; else cyclestate = 0;
-	
-	if (last_cyclestate == 0 && cyclestate == 1) {
-		total_numberOfSamples = numberOfSamples;
-		total_sumV = sumV;
-		total_sumI = sumI;
-		total_sumP = sumP;
-	}
 }
 
 void PostLoopCalc() {
-	//-------------------------------------------------------------------------------------------------------------------------
-	// 3) Post loop calculations
-	//-------------------------------------------------------------------------------------------------------------------------
 	//Calculation of the root of the mean of the voltage and current squared (rms)
 	//Calibration co-efficients applied.
 	

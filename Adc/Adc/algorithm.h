@@ -19,7 +19,7 @@
 uint16_t analog_input_voltage;
 uint16_t analog_input_current;
 
-double realPower, apparentPower, powerFactor, Vrms, Irms;
+double realPower, Vrms, Irms;
 
 int16_t lastSampleV,sampleV;
 int32_t shifted_filterV;
@@ -32,10 +32,13 @@ float sumI,sumP,total_sumI,total_sumP;
 uint16_t numberOfSamples;
 uint16_t total_numberOfSamples;
 
-uint8_t last_cyclestate, cyclestate;
+uint8_t cyclecount;
 
-void InitAlgorithm();
-void LoopCalc();
+int32_t filteredV;
+int32_t filteredI;
+
+void VoltCalc();
+void AmpCalc();
 void PostLoopCalc();
 
 #endif /* ALGORITHM_H_ */

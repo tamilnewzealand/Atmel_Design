@@ -18,7 +18,7 @@ int main(void) {
 	SPI1Init();
 	Timer1Init();
 	Timer0Init();
-	InitAlgorithm();
+	InitComp();
 	while(1) {
 		//do nothing as everything is done in ISR |;-)
 	}

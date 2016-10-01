@@ -17,5 +17,7 @@ volatile uint8_t count;
 
 void InitADC();
 ISR(ADC_vect);
+void InitComp();
+ISR (ANALOG_COMP_vect);
 
 #endif /* ADC_H_ */

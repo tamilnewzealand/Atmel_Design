@@ -36,5 +36,24 @@ if (isr_chan == V_Filter) {
 ADMUX = (ADMUX & 0xF0) | (isr_chan & 0x0F);
 ADCSRA |= (1<<ADSC);
 
-if (isr_chan == V_Filter) LoopCalc();
+if (isr_chan == V_Filter) AmpCalc();
+if (isr_chan == I_Filter) VoltCalc();
+}
+
+void InitComp() {
+	ACSR |= (1<<ACIE);
+	cyclecount = 0;
+	sei();
+}
+
+ISR (ANALOG_COMP_vect) {
+	//Check for rising or falling edge
+	if (ACSR & (1<<ACO)) cyclecount++;
+	if (cyclecount > 10) {
+		total_numberOfSamples = numberOfSamples;
+		total_sumV = sumV;
+		total_sumI = sumI;
+		total_sumP = sumP;
+		cyclecount = 0;
+	}
 }
