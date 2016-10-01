@@ -12,17 +12,30 @@
 #include <math.h>
 #include <avr/io.h>
 
-#define VREF 3.3F
-#define Mid_Supply 3
-#define I_Filter 2
-#define V_Filter 0
+#define Mid_Supply 5
+#define I_Filter 3
+#define V_Filter 4
 
-volatile uint16_t adc_vol_result[65];
-volatile uint16_t adc_amp_result[65];
-volatile double offset;
+uint16_t analog_input_voltage;
+uint16_t analog_input_current;
 
-double CalcRMS(uint8_t type);
-double CalcPeak();
-double CalcPower();
+double realPower, apparentPower, powerFactor, Vrms, Irms;
+
+int16_t lastSampleV,sampleV;
+int32_t shifted_filterV;
+float sumV, total_sumV;
+
+int16_t lastSampleI,sampleI;
+int32_t shifted_filterI;
+float sumI,sumP,total_sumI,total_sumP;
+
+uint16_t numberOfSamples;
+uint16_t total_numberOfSamples;
+
+uint8_t last_cyclestate, cyclestate;
+
+void InitAlgorithm();
+void LoopCalc();
+void PostLoopCalc();
 
 #endif /* ALGORITHM_H_ */

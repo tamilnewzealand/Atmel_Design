@@ -12,41 +12,29 @@ void InitADC() {
 	ADMUX |= (1<<REFS0);
 	
 	//set prescaller to 128 and enable ADC
-	ADCSRA |= (1<<ADPS2)|(1<<ADPS1)|(1<<ADPS0)|(1<<ADEN);
+	ADCSRA |= (1<<ADPS2)|(1<<ADPS1)|(1<<ADPS0)|(1<<ADEN)|(1<<ADIE);
 	
-	// taking a reading of the Mid_Supply
-	isr_chan = Mid_Supply;
-	ADMUX = (ADMUX & 0xF0) | (isr_chan & 0x0F);
-	ADCSRA |= (1<<ADSC);
-	while(ADCSRA & (1<<ADSC));
-	offset = ADC;
-	
-	// turn on ADC interrupts
-	ADCSRA |= (1<<ADIE);
-	
-	//setup ADC for first sample
 	isr_chan = V_Filter;
 	count = 0;
-	ADMUX = (ADMUX & 0xF0) | (isr_chan & 0x0F);	
+	
 	ADCSRA |= (1<<ADSC);
 	
-	//turn on global interrupts
 	sei();
 }
 
 ISR(ADC_vect) {
-	// check and store ADC reading to appropriate vector
-	if (isr_chan == V_Filter) {
-		adc_vol_result[count] = ADC;
+// check and store ADC reading to appropriate vector
+if (isr_chan == V_Filter) {
+		analog_input_voltage = ADC;
 		isr_chan = I_Filter;
 	} else if (isr_chan == I_Filter) {
-		adc_amp_result[count] = ADC;
+		analog_input_current = ADC;
 		isr_chan = V_Filter;
-		count++;
-	}
-	
-	// setup ADC for next reading
-	ADMUX = (ADMUX & 0xF0) | (isr_chan & 0x0F);
-	if (count == 63) count = 0;
-	ADCSRA |= (1<<ADSC);
+}
+
+// setup ADC for next reading
+ADMUX = (ADMUX & 0xF0) | (isr_chan & 0x0F);
+ADCSRA |= (1<<ADSC);
+
+if (isr_chan == V_Filter) LoopCalc();
 }
