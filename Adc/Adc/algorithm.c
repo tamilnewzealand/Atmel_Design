@@ -1,11 +1,25 @@
-/*
- * algorithm.c
+/*   
+ * Wireless Energy Monitor
  *
- * Created: 25/08/2016 6:15:35 p.m.
- * Author : ssit662
+ * Copyright (C) 2016 Sakayan Sitsabesan <ssit662@aucklanduni.ac.nz>
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "algorithm.h"
+
+// Algorithm below is based on ideas from ATMEL AVR465: Single-Phase Power/Energy Meter.
 
 void VoltCalc() {
 	int32_t shiftedFCL;
@@ -22,6 +36,7 @@ void VoltCalc() {
 	
 	sumV += filteredV * filteredV;
 }
+
 void AmpCalc() {
 	int32_t shiftedFCL;
 	
@@ -48,10 +63,4 @@ void PostLoopCalc() {
 
 	//Calculation power values
 	realPower = (double)(49.5 / 1023.0) * (double)(4.73 / 1023.0) * total_sumP / total_numberOfSamples;
-
-	//Reset accumulators
-	sumV = 0;
-	sumI = 0;
-	sumP = 0;
-	numberOfSamples = 0;
 }
