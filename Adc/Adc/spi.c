@@ -25,7 +25,9 @@ void SPI1Init(void) {
 	DDRE |= (1<<3)|(1<<2);
 	
 	// Enable SPI, Set as Master, Pre-scaler: Fosc/128
-	SPCR1 = (1<<SPE1)|(1<<MSTR1)|(1<<SPR11)|(1<<SPR10)|(1<<CPOL1)|(1<<CPHA1);
+	SPCR1 = (1<<SPE1)|(1<<MSTR1)|(1<<SPR11)|(1<<SPR10);
+	SPCR1 &=~ (1<<CPOL1);
+	SPCR1 &=~ (1<<CPHA1);
 }
 
 void SPI1SendByte(uint8_t data) {
@@ -41,9 +43,9 @@ void SetMcp6S91Gain(uint8_t gain) {
 	SPI1SendByte(gain);
 }
 
-void PGAInit(void) {
+void Mcp6S91Init(void) {
 	SPI1Init();
-	SPI1SendByte(0x41);
+	SPI1SendByte(MCP6S91_CHANNEL_CMD);
 	SPI1SendByte(0x00);
 	SetMcp6S91Gain(MCP6S91_GAIN_1);
 }

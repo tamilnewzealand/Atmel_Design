@@ -27,6 +27,7 @@
 #include <util/delay.h>
 
 #define MCP6S91_GAIN_CMD      0x40
+#define MCP6S91_CHANNEL_CMD   0x41
 #define MCP6S91_SHUTDOWN_CMD  0x20
 
 #define MCP6S91_GAIN_1    0
@@ -41,6 +42,6 @@
 void SPI1Init (void);
 void SPI1SendByte(uint8_t data);
 void SetMcp6S91Gain(uint8_t gain);
-void PGAInit(void);
+void Mcp6S91Init(void);
 
 #endif /* SPI_H_ */

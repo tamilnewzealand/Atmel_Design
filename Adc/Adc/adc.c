@@ -61,7 +61,7 @@ void InitComp() {
 ISR (ANALOG_COMP_vect) {
 	//Check for rising or falling edge
 	if (ACSR & (1<<ACO)) cyclecount++;
-	if (cyclecount > 10) {
+	if (cyclecount > 100) {
 		total_numberOfSamples = numberOfSamples;
 		total_sumV = sumV;
 		total_sumI = sumI;

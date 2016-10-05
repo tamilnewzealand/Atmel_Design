@@ -27,7 +27,7 @@ int main(void) {
 	_delay_ms(1);
 	InitADC();
 	USART0Init();
-	PGAInit();
+	Mcp6S91Init();
 	Timer1Init();
 	Timer0Init();
 	InitComp();
