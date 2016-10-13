@@ -19,57 +19,94 @@
 
 #include "algorithm.h"
 
-// Algorithm below is based on ideas from ATMEL AVR465: Single-Phase Power/Energy Meter.
 
+/*
+ * Algorithm below is based on ideas from ATMEL AVR465: Single-Phase Power/Energy Meter.
+ *
+ * Initializes values used in algorithms to zero and sets
+ * some pins used as LEDs to outputs.
+ */
 void AlgInit() {
-	analog_input = 0;
+	DDRD |= (1 << 2)|(1 << 3)|(1 << 4);
+	DDRE |= (1 << 0);
 
 	sumV = 0;
-	total_sumV = 0;
-	
 	sumI = 0;
 	sumP = 0;
-	total_sumI = 0;
-	total_sumP = 0;
-
 	numberOfSamples = 0;
-	total_numberOfSamples = 0;
-	
-	offsetV = 0;
-	offsetI = 0;
 }
 
-void VoltCalc() {		
-	// Filters below are based on ideas from:
-	// http://openenergymonitor.org/emon/buildingblocks/digital-filters-for-offset-removal
-	
-    //offsetV = offsetV + ((analog_input-offsetV)/1024);
-    //filteredV = analog_input - offsetV;
-	filteredV = analog_input;
+/*
+ * Low Pass filter is used to remove the DC Offset present in the signal.
+ * To increase efficiency an ADC reading of the buffered 1V65 line is used
+ * as the initial value of this filter.
+ *
+ * Filter below is based on ideas from:
+ * http://openenergymonitor.org/emon/buildingblocks/digital-filters-for-offset-removal
+ *
+ * After filtering of the DC offset, the value is squared and added to a
+ * temporary accumulator.
+ */
+void VoltCalc() {	
+    offset = offset + ((analog_input-offset)>>10);
+    filteredV = analog_input - offset;
 	
 	sumV += filteredV * filteredV;
 }
 
+/*
+ * Uses same offset value as used for the Voltage to remove the DC offset.
+ * Squared values are then added to the accumulators.
+ */
 void AmpCalc() {
-    //offsetI = offsetI + ((analog_input-offsetI)/1024);
-    //filteredI = analog_input - offsetI;
-	filteredI = analog_input;
+	filteredI = analog_input - offset;
 	
 	sumI += filteredI * filteredI;
 	sumP += filteredV * filteredI;
+	
 	numberOfSamples++;
 }
 
-void PostLoopCalc() {			
-	PORTD ^= (1 << 2);
-	PORTD ^= (1 << 3);
-	PORTD ^= (1 << 4);
-			
+/*
+ * This section of the algorithm is polled every 1 second. 
+ * Calculates the Vrms, Irms, Ipk, realPower values.
+ * Also controls the 4 LED bar based on power values.
+ */
+void PostLoopCalc() {		
 	Vrms = sqrt(total_sumV / total_numberOfSamples);
 	Vrms *= (float)0.0483871; // 49.5 / 1023
+	// Vrms -= 5.65;
 	
 	Irms = sqrt(total_sumI / total_numberOfSamples);
 	Irms *= (float)0.00462366; //4.73 / 1023
+	Irms *= gain;
+	Ipk = Irms * 1414;
 
-	realPower = (float)0.00022373 * total_sumP / (float)total_numberOfSamples;
+	realPower = (float)0.00022373 * gain * total_sumP / (float)total_numberOfSamples;
+	
+	if (realPower > 0.6375) {
+		flashRate = 3;
+		PORTD |= (1 << 2);
+		PORTD |= (1 << 3);
+		PORTD |= (1 << 4);
+		PORTE |= (1 << 0);
+	} else if (realPower > 0.425) {
+		flashRate = 2;
+		PORTD |= (1 << 2);
+		PORTD |= (1 << 3);
+		PORTD |= (1 << 4);
+		PORTE &=~ (1 << 0);
+	} else if (realPower > 0.2125) {
+		flashRate = 1;
+		PORTD |= (1 << 2);
+		PORTD |= (1 << 3);
+		PORTD &=~ (1 << 4);
+		PORTE &=~ (1 << 0);
+	} else {
+		flashRate = 0;
+		PORTD |= (1 << 2);
+		PORTD &=~ (1 << 3);
+		PORTD &=~ (1 << 4);
+		PORTE &=~ (1 << 0);
+	}
 }

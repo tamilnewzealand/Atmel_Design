@@ -22,6 +22,7 @@
 
 #include <math.h>
 #include <avr/io.h>
+#include "spi.h"
 
 #define Mid_Supply 4
 #define I_Filter 5
@@ -36,6 +37,7 @@ volatile float Vrms;
 volatile float sumI;
 volatile float total_sumI;
 volatile float Irms;
+volatile float Ipk;
 
 volatile float sumP;
 volatile float total_sumP;
@@ -47,9 +49,11 @@ volatile int16_t total_numberOfSamples;
 volatile int32_t filteredV;
 volatile int32_t filteredI;
 
-volatile int32_t offsetV;
-volatile int32_t offsetI;
+volatile int32_t offset;
 
+volatile uint8_t flashRate;
+
+uint8_t gain;
 
 void AlgInit();
 void VoltCalc();

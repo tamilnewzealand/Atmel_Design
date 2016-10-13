@@ -18,52 +18,69 @@
  */
 
 #include "adc.h"
-#include "usart.h"
 
+/*
+ * Initializes the ADC of the ATmega328PB. Sets Vref to external 
+ * AVcc voltage of 3.3V. Sets prescaller to 32 so Fadc = 250KHz.
+ * Takes a sample of the mid supply channel and stores this value
+ * in 'offset'. Sets up ADC for V_Filter sample, starts conversion
+ * and enables interrupts.
+*/
 void InitADC() {
-	// Select Vref to internal AREF
 	ADMUX |= (1<<REFS0);
+	ADCSRA |= (1<<ADPS2)|(1<<ADPS0)|(1<<ADEN);
 	
-	//set prescaller to 32 and enable ADC
-	ADCSRA |= (1<<ADPS2)|(1<<ADPS0)|(1<<ADEN)|(1<<ADIE);
-	
-	isr_chan = V_Filter;
-	count = 0;
-	
+	isr_chan = Mid_Supply;
+	ADMUX = (ADMUX & 0xF0) | (isr_chan & 0x0F);
 	ADCSRA |= (1<<ADSC);
+	while ((ADCSRA & (1<<ADSC)));
+	offset = ADC;
 	
-	sei();
+	ADCSRA |= (1<<ADIE)
+	isr_chan = V_Filter;
+	ADCSRA |= (1<<ADSC);
 }
 
+/*
+ * ADC Interrupt handler.
+ * Stores ADC sample, changes ADC Channel, and sets up ADC for 
+ * next conversion. Also calls the appropriate calculation 
+ * functions needed.
+ */
 ISR(ADC_vect) {
-// check and store ADC reading to appropriate vector
-if (isr_chan == V_Filter) {
+	if (isr_chan == V_Filter) {
 		analog_input = ADC;
 		isr_chan = I_Filter;
 	} else if (isr_chan == I_Filter) {
 		analog_input = ADC;
 		isr_chan = V_Filter;
+	}
+
+	ADMUX = (ADMUX & 0xF0) | (isr_chan & 0x0F);
+	ADCSRA |= (1<<ADSC);
+
+	if (isr_chan == V_Filter) AmpCalc();
+	if (isr_chan == I_Filter) VoltCalc();
 }
 
-// setup ADC for next reading
-ADMUX = (ADMUX & 0xF0) | (isr_chan & 0x0F);
-ADCSRA |= (1<<ADSC);
-
-if (isr_chan == V_Filter) AmpCalc();
-if (isr_chan == I_Filter) VoltCalc();
-}
-
+/*
+ * Initializes the internal Analog Comparator of the ATmega328PB.
+ * Comparator triggers interrupt on falling edge of V_Filter.
+ */
 void InitComp() {
 	ACSR |= (1<<ACIE)|(1<<ACIS1)|(1<<ACIS0);
-	//ACSRB |= (1<<ACOE);
-	DDRE |= (1 << 0);
 	cyclecount = 0;
 	sei();
 }
 
+/*
+ * Analog Comparator Interrupt Handler
+ * Counts number of zero crossing in 'cyclecount'.
+ * Once 100 zero crossings have been detected, the temporary
+ * accumulators values are copied over to another set of 
+ * variables and the accumulators are cleared.
+ */
 ISR (ANALOG_COMP_vect) {
-	//Check for rising edge
-	PORTE ^= (1 << 0);
 	cyclecount++;
 	if (cyclecount > 100) {
 		total_numberOfSamples = numberOfSamples;
@@ -71,8 +88,6 @@ ISR (ANALOG_COMP_vect) {
 		total_sumI = sumI;
 		total_sumP = sumP;
 		cyclecount = 0;
-		
-		//Reset accumulators
 		sumV = 0;
 		sumI = 0;
 		sumP = 0;
