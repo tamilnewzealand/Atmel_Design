@@ -22,17 +22,32 @@
 #include "spi.h"
 #include "timer.h"
 #include "algorithm.h"
+#include <stdio.h>
 	
 int main(void) {
 	_delay_ms(1);
+	AlgInit();
 	InitADC();
-	USART0Init();
 	Mcp6S91Init();
+	USART0Init();
 	Timer1Init();
-	Timer0Init();
+	//Timer0Init();
 	InitComp();
 	while(1) {
-		if (tot1_overflow >= 15) {
+		if (TIFR0 & (1<<TOV0)) {
+			TIFR0 = (1<<TOV0);
+			tot0_overflow++;
+			PORTB ^= (1 << 2);
+			if (tot0_overflow < 85) {
+				USART0TransmitNumber(Irms, 0);
+				} else if (tot0_overflow < 170) {
+				USART0TransmitNumber(Vrms, 1);
+				} else {
+				USART0TransmitNumber(realPower, 2);
+			}
+			if (tot0_overflow == 255) tot0_overflow = 0;
+		}
+		if (tot1_overflow >= 2) {
 			tot1_overflow = 0;
 			PostLoopCalc();
 		}

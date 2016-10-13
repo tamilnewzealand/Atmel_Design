@@ -25,6 +25,7 @@
 
 volatile uint8_t isr_chan;
 volatile uint8_t count;
+volatile uint8_t cyclecount;
 
 void InitADC();
 ISR(ADC_vect);

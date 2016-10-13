@@ -34,5 +34,6 @@
 void USART0Init(void);
 int USART0SendByte(uint8_t data);
 void USART0TransmitNumber(double value, uint8_t type);
+void USART0SendString(char s[]);
 
 #endif /* USART_H_ */

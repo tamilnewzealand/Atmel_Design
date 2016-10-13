@@ -18,13 +18,14 @@
  */
 
 #include "adc.h"
+#include "usart.h"
 
 void InitADC() {
 	// Select Vref to internal AREF
 	ADMUX |= (1<<REFS0);
 	
-	//set prescaller to 128 and enable ADC
-	ADCSRA |= (1<<ADPS2)|(1<<ADPS1)|(1<<ADPS0)|(1<<ADEN)|(1<<ADIE);
+	//set prescaller to 32 and enable ADC
+	ADCSRA |= (1<<ADPS2)|(1<<ADPS0)|(1<<ADEN)|(1<<ADIE);
 	
 	isr_chan = V_Filter;
 	count = 0;
@@ -37,10 +38,10 @@ void InitADC() {
 ISR(ADC_vect) {
 // check and store ADC reading to appropriate vector
 if (isr_chan == V_Filter) {
-		analog_input_voltage = ADC;
+		analog_input = ADC;
 		isr_chan = I_Filter;
 	} else if (isr_chan == I_Filter) {
-		analog_input_current = ADC;
+		analog_input = ADC;
 		isr_chan = V_Filter;
 }
 
@@ -53,14 +54,17 @@ if (isr_chan == I_Filter) VoltCalc();
 }
 
 void InitComp() {
-	ACSR |= (1<<ACIE);
+	ACSR |= (1<<ACIE)|(1<<ACIS1)|(1<<ACIS0);
+	//ACSRB |= (1<<ACOE);
+	DDRE |= (1 << 0);
 	cyclecount = 0;
 	sei();
 }
 
 ISR (ANALOG_COMP_vect) {
-	//Check for rising or falling edge
-	if (ACSR & (1<<ACO)) cyclecount++;
+	//Check for rising edge
+	PORTE ^= (1 << 0);
+	cyclecount++;
 	if (cyclecount > 100) {
 		total_numberOfSamples = numberOfSamples;
 		total_sumV = sumV;

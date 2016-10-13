@@ -23,39 +23,35 @@
 #include <math.h>
 #include <avr/io.h>
 
-#define Mid_Supply 5
-#define I_Filter 4
+#define Mid_Supply 4
+#define I_Filter 5
 #define V_Filter 3
 
-volatile uint16_t analog_input_voltage;
-volatile uint16_t analog_input_current;
+volatile uint16_t analog_input;
 
-volatile double realPower;
-volatile double Vrms;
-volatile double Irms;
-
-volatile int16_t lastSampleV;
-volatile int16_t sampleV;
-volatile int32_t shifted_filterV;
 volatile float sumV;
 volatile float total_sumV;
+volatile float Vrms;
 
-volatile int16_t lastSampleI;
-volatile int16_t sampleI;
-volatile int32_t shifted_filterI;
 volatile float sumI;
-volatile float sumP;
 volatile float total_sumI;
+volatile float Irms;
+
+volatile float sumP;
 volatile float total_sumP;
+volatile float realPower;
 
-volatile uint16_t numberOfSamples;
-volatile uint16_t total_numberOfSamples;
-
-volatile uint8_t cyclecount;
+volatile int16_t numberOfSamples;
+volatile int16_t total_numberOfSamples;
 
 volatile int32_t filteredV;
 volatile int32_t filteredI;
 
+volatile int32_t offsetV;
+volatile int32_t offsetI;
+
+
+void AlgInit();
 void VoltCalc();
 void AmpCalc();
 void PostLoopCalc();

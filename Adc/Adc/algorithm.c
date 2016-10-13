@@ -21,46 +21,55 @@
 
 // Algorithm below is based on ideas from ATMEL AVR465: Single-Phase Power/Energy Meter.
 
-void VoltCalc() {
-	int32_t shiftedFCL;
+void AlgInit() {
+	analog_input = 0;
+
+	sumV = 0;
+	total_sumV = 0;
 	
-	lastSampleV=sampleV;
-	sampleV = analog_input_voltage;
+	sumI = 0;
+	sumP = 0;
+	total_sumI = 0;
+	total_sumP = 0;
+
+	numberOfSamples = 0;
+	total_numberOfSamples = 0;
 	
+	offsetV = 0;
+	offsetI = 0;
+}
+
+void VoltCalc() {		
 	// Filters below are based on ideas from:
 	// http://openenergymonitor.org/emon/buildingblocks/digital-filters-for-offset-removal
 	
-	shiftedFCL = shifted_filterV + (int32_t)((sampleV-lastSampleV)<<8);
-	shifted_filterV = shiftedFCL - (shiftedFCL>>8);
-	filteredV = (shifted_filterV+128)>>8;
+    //offsetV = offsetV + ((analog_input-offsetV)/1024);
+    //filteredV = analog_input - offsetV;
+	filteredV = analog_input;
 	
 	sumV += filteredV * filteredV;
 }
 
 void AmpCalc() {
-	int32_t shiftedFCL;
-	
-	numberOfSamples++;
-	
-	lastSampleI=sampleI;
-	sampleI = analog_input_current;
-	
-	shiftedFCL = shifted_filterI + (int32_t)((sampleI-lastSampleI)<<8);
-	shifted_filterI = shiftedFCL - (shiftedFCL>>8);
-	filteredI = (shifted_filterI+128)>>8;
+    //offsetI = offsetI + ((analog_input-offsetI)/1024);
+    //filteredI = analog_input - offsetI;
+	filteredI = analog_input;
 	
 	sumI += filteredI * filteredI;
 	sumP += filteredV * filteredI;
+	numberOfSamples++;
 }
 
-void PostLoopCalc() {
-	//Calculation of the root of the mean of the voltage and current squared (rms)
-	//Calibration co-efficients applied.
+void PostLoopCalc() {			
+	PORTD ^= (1 << 2);
+	PORTD ^= (1 << 3);
+	PORTD ^= (1 << 4);
+			
+	Vrms = sqrt(total_sumV / total_numberOfSamples);
+	Vrms *= (float)0.0483871; // 49.5 / 1023
 	
-	Vrms = (double)(49.5 / 1023.0) * sqrt(total_sumV / total_numberOfSamples);
-	
-	Irms = (double)(4.73 / 1023.0) * sqrt(total_sumI / total_numberOfSamples);
+	Irms = sqrt(total_sumI / total_numberOfSamples);
+	Irms *= (float)0.00462366; //4.73 / 1023
 
-	//Calculation power values
-	realPower = (double)(49.5 / 1023.0) * (double)(4.73 / 1023.0) * total_sumP / total_numberOfSamples;
+	realPower = (float)0.00022373 * total_sumP / (float)total_numberOfSamples;
 }

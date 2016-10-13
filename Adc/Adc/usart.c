@@ -46,10 +46,7 @@ void USART0TransmitNumber(double value, uint8_t type) {
 	if (type == 0) USART0SendByte(0x70);
 	else if (type == 1) USART0SendByte(0x61);
 	else {
-		digit = (uint8_t)value % 10;
-		digit |= (1 << 6);
-		digit |= (1 << 5);
-		digit |= (1 << 4);
+		digit = 0x70 | ((uint8_t)value % 10);
 		USART0SendByte(digit);
 	}
 	
@@ -58,24 +55,27 @@ void USART0TransmitNumber(double value, uint8_t type) {
 	}
 	digit = (uint8_t)value % 10;
 	if (type != 1) {
-		digit |= (1 << 6);
-		digit &=~ (1 << 5);
-		digit &=~ (1 << 4);
+		digit |= 0x40;
 		} else {
-		digit |= (1 << 6);
-		digit &=~ (1 << 5);
-		digit |= (1 << 4);
+		digit |= 0x50;
 	}
 	USART0SendByte(digit);
 	
-	value *= 10;
-	digit = (uint8_t)value % 10;
-	digit &=~ (1 << 6);
-	digit |= (1 << 5);
-	digit &=~ (1 << 4);
+	digit = 0x20 | ((uint8_t)(value * 10.0) % 10);
 	USART0SendByte(digit);
 	
-	if (type == 0) USART0SendByte(0x0A);
-	if (type == 1) USART0SendByte(0x0B);
-	if (type == 2) USART0SendByte(0x0C);
+	if (type == 0) USART0SendByte(0x0D);
+	if (type == 1) USART0SendByte(0x0E);
+	if (type == 2) USART0SendByte(0x0F);
+}
+
+
+void USART0SendString(char s[]) {
+	int i = 0;
+	
+	while (s[i] != '\0')
+	{
+		USART0SendByte(s[i]);
+		i++;
+	}
 }
