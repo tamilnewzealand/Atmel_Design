@@ -25,7 +25,6 @@
 #define F_CPU 8000000UL
 #endif
 #include <util/delay.h>
-#include "algorithm.h"
 
 #define MCP6S91_GAIN_CMD      0x40
 #define MCP6S91_CHANNEL_CMD   0x41
@@ -44,6 +43,5 @@ void SPI1Init (void);
 void SPI1SendByte(uint8_t data);
 void SetMcp6S91Gain(uint8_t gain);
 void Mcp6S91Init(void);
-void Mcp6S91AutoAdjust(void);
 
 #endif /* SPI_H_ */

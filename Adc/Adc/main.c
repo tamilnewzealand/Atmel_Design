@@ -22,17 +22,18 @@
 #include "spi.h"
 #include "timer.h"
 #include "algorithm.h"
+#include <stdio.h>
 	
 int main(void) {
+	_delay_ms(1);
 	AlgInit();
 	InitADC();
 	Mcp6S91Init();
 	USART0Init();
 	Timer1Init();
-	Timer0Init();
+	//Timer0Init();
 	InitComp();
 	while(1) {
-		
 		if (TIFR0 & (1<<TOV0)) {
 			TIFR0 = (1<<TOV0);
 			tot0_overflow++;
@@ -46,11 +47,9 @@ int main(void) {
 			}
 			if (tot0_overflow == 255) tot0_overflow = 0;
 		}
-		
-		if (tot1_overflow >= 3) {
+		if (tot1_overflow >= 2) {
 			tot1_overflow = 0;
 			PostLoopCalc();
 		}
-		
 	}
 }

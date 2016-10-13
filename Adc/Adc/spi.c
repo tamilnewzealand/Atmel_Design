@@ -19,23 +19,17 @@
 
 #include "spi.h"
 
-/* 
- * Enables the SPI1 of the ATmega328PB as master with a prescaller
- * of 128, for communication with the PGA.
- */ 
 void SPI1Init(void) {
+	// Set MOSI, SCK, SS as Output
 	DDRC |= (1<<1);
 	DDRE |= (1<<3)|(1<<2);
+	
+	// Enable SPI, Set as Master, Pre-scaler: Fosc/128
 	SPCR1 = (1<<SPE1)|(1<<MSTR1)|(1<<SPR11)|(1<<SPR10);
 	SPCR1 &=~ (1<<CPOL1);
 	SPCR1 &=~ (1<<CPHA1);
 }
 
-/*
- * Transmits one byte of data through SPI1.
- * Is passed in the data to be sent as 'data'.
- * Uses polling mechanism to ensure complete transmission.
- */
 void SPI1SendByte(uint8_t data) {
 	// Load data into the buffer
 	SPDR1 = data;
@@ -54,17 +48,4 @@ void Mcp6S91Init(void) {
 	SPI1SendByte(MCP6S91_CHANNEL_CMD);
 	SPI1SendByte(0x00);
 	SetMcp6S91Gain(MCP6S91_GAIN_1);
-}
-
-void Mcp6S91AutoAdjust(void) {
-	if (Ipk > 530 && gain != 1) {
-		gain = 1;
-		SetMcp6S91Gain(MCP6S91_GAIN_1);			
-	} else if (Ipk > 265 && gain != 2) {
-		gain = 2;
-		SetMcp6S91Gain(MCP6S91_GAIN_2);
-	} else if (Ipk > 130 && gain != 4) {
-		gain = 4;
-		SetMcp6S91Gain(MCP6S91_GAIN_4);
-	}
 }

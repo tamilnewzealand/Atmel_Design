@@ -22,38 +22,28 @@
 void Timer0Init() {
 	TCCR0B |= (1 << CS02);
 	TCNT0 = 0;
+	//TIMSK0 |= (1 << TOIE0);
+	DDRB |= (1 << 2);
+	sei();
 	tot0_overflow = 0;
 	Irms = 0.80;
 	Vrms = 12.00;
 	realPower = 9.60;
 }
 
+//ISR(TIMER0_OVF_vect) {
+	//tot0_overflow++;
+//}
+
 void Timer1Init() {
+	DDRD |= (1 << 2)|(1 << 3)|(1 << 4);
 	TCCR1B |= (1 << CS11)|(1 << CS10);
 	TCNT1 = 0;
 	TIMSK1 |= (1 << TOIE1);
+	sei();
 	tot1_overflow = 0;
 }
 
 ISR(TIMER1_OVF_vect) {
 	tot1_overflow++;
-}
-
-void Timer2Init() {
-	TCCR1B |= (1 << CS22)|(1 << CS20);
-	DDRB |= (2 << 0);
-	TCNT2 = 0;
-	TIMSK2 |= (1 << TOIE2);
-	PORTB |= (2 << 0);
-}
-
-ISR(TIMER2_OVF_vect) {
-	tot2_overflow++;
-	if (tot2_overflow == 61 && flashRate == 1) PORTB &=~ (2 << 0);
-	if (tot2_overflow == 122 && flashRate == 2) PORTB &=~ (2 << 0);
-	if (tot2_overflow == 183 && flashRate == 3) PORTB &=~ (2 << 0);
-	if (tot2_overflow == 244) {
-		tot2_overflow = 0;
-		PORTB |= (2 << 0);
-	}
 }
