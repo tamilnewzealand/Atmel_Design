@@ -47,9 +47,9 @@ volatile int16_t total_numberOfSamples;
 volatile int32_t filteredV;
 volatile int32_t filteredI;
 
-volatile int32_t offsetV;
 volatile int32_t offsetI;
-
+volatile int32_t offsetV;
+volatile uint8_t flashRate;
 
 void AlgInit();
 void VoltCalc();

@@ -44,6 +44,38 @@ void Timer1Init() {
 	tot1_overflow = 0;
 }
 
+/*
+ * Timer 1 Overflow Interrupt handler. Increments overflow counter.
+ */
 ISR(TIMER1_OVF_vect) {
 	tot1_overflow++;
+}
+
+/*
+ * Initializes Timer 2 with pre-scaler of 256. This timer is used
+ * for timing the flashing of the blinking LED. Operates on 
+ * interrupt basis.
+ */
+void Timer2Init() {
+	TCCR1B |= (1 << CS22);
+	DDRB |= (2 << 0);
+	TCNT2 = 0;
+	TIMSK2 |= (1 << TOIE2);
+	PORTB |= (2 << 0);
+}
+
+/*
+ * Timer 2 Overflow Interrupt handler.
+ * Increments overflow counter and flashes blinking LED according
+ * to power values, read from 'flashRate' variable.
+ */
+ISR(TIMER2_OVF_vect) {
+	tot2_overflow++;
+	if (tot2_overflow == 30 && flashRate == 1) PORTB &=~ (2 << 0);
+	if (tot2_overflow == 60 && flashRate == 2) PORTB &=~ (2 << 0);
+	if (tot2_overflow == 90 && flashRate == 3) PORTB &=~ (2 << 0);
+	if (tot2_overflow == 120) {
+		tot2_overflow = 0;
+		PORTB |= (2 << 0);
+	}
 }

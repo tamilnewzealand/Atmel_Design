@@ -27,6 +27,7 @@
 // global variable to count the number of overflows
 volatile uint8_t tot0_overflow;
 volatile uint8_t tot1_overflow;
+volatile uint8_t tot2_overflow;
 
 void Timer0Init();
 ISR(TIMER0_OVF_vect);

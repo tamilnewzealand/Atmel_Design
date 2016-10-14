@@ -31,7 +31,7 @@ int main(void) {
 	Mcp6S91Init();
 	USART0Init();
 	Timer1Init();
-	//Timer0Init();
+	Timer0Init();
 	InitComp();
 	while(1) {
 		if (TIFR0 & (1<<TOV0)) {
@@ -39,7 +39,7 @@ int main(void) {
 			tot0_overflow++;
 			PORTB ^= (1 << 2);
 			if (tot0_overflow < 85) {
-				USART0TransmitNumber(Irms, 0);
+				USART0TransmitNumber(Ipk, 0);
 				} else if (tot0_overflow < 170) {
 				USART0TransmitNumber(Vrms, 1);
 				} else {
@@ -47,7 +47,7 @@ int main(void) {
 			}
 			if (tot0_overflow == 255) tot0_overflow = 0;
 		}
-		if (tot1_overflow >= 2) {
+		if (tot1_overflow >= 3) {
 			tot1_overflow = 0;
 			PostLoopCalc();
 		}

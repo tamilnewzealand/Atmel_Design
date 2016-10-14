@@ -39,9 +39,13 @@
 #define MCP6S91_GAIN_16   6
 #define MCP6S91_GAIN_32   7
 
+volatile float Ipk;
+uint8_t gain;
+
 void SPI1Init (void);
 void SPI1SendByte(uint8_t data);
 void SetMcp6S91Gain(uint8_t gain);
 void Mcp6S91Init(void);
+void Mcp6S91AutoAdjust(void);
 
 #endif /* SPI_H_ */
