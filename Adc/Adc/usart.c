@@ -61,23 +61,27 @@ void USART0TransmitNumber(double value, uint8_t type) {
 	if (type == 1) digit = 0x61;
 	if (type == 2) digit = 0x70 | ((uint8_t)value % 10);
 	USART0SendByte(digit);
+	_delay_us(100);
 	
 	// Digit 100
 	if (type == 0) digit = ((uint8_t)(value / 10) % 10) | 0x40;
 	if (type == 1) digit = ((uint8_t)value % 10) | 0x50;
 	if (type == 2) digit = ((uint8_t)(value * 10) % 10) | 0x40;
 	USART0SendByte(digit);
+	_delay_us(100);
 	
 	// Digit 10
 	if (type == 0) digit = 0x20 | ((uint16_t)value % 10);
 	if (type == 1) digit = 0x20 | ((uint8_t)(value * 10.0) % 10);
 	if (type == 2) digit = 0x20 | ((uint8_t)(value * 100.0) % 10);
 	USART0SendByte(digit);
+	_delay_us(100);
 	
 	//Digit 1 (units)
 	if (type == 0) USART0SendByte(0x0A);
 	if (type == 1) USART0SendByte(0x0B);
 	if (type == 2) USART0SendByte(0x0C);
+	_delay_us(100);
 }
 
 /*

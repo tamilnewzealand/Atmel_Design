@@ -31,10 +31,6 @@ void Timer0Init() {
 	realPower = 9.60;
 }
 
-//ISR(TIMER0_OVF_vect) {
-	//tot0_overflow++;
-//}
-
 void Timer1Init() {
 	DDRD |= (1 << 2)|(1 << 3)|(1 << 4);
 	TCCR1B |= (1 << CS11)|(1 << CS10);
@@ -57,7 +53,7 @@ ISR(TIMER1_OVF_vect) {
  * interrupt basis.
  */
 void Timer2Init() {
-	TCCR1B |= (1 << CS22);
+	TCCR1B |= (1 << CS22)|(1 << CS20);
 	DDRB |= (2 << 0);
 	TCNT2 = 0;
 	TIMSK2 |= (1 << TOIE2);
@@ -71,11 +67,8 @@ void Timer2Init() {
  */
 ISR(TIMER2_OVF_vect) {
 	tot2_overflow++;
-	if (tot2_overflow == 30 && flashRate == 1) PORTB &=~ (2 << 0);
-	if (tot2_overflow == 60 && flashRate == 2) PORTB &=~ (2 << 0);
-	if (tot2_overflow == 90 && flashRate == 3) PORTB &=~ (2 << 0);
-	if (tot2_overflow == 120) {
+	if (tot2_overflow > flashRate) {
+		PORTB ^= (2 << 0);
 		tot2_overflow = 0;
-		PORTB |= (2 << 0);
 	}
 }

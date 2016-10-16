@@ -44,9 +44,9 @@ void SPI1SendByte(uint8_t data) {
 /*
  * Sets the gain of the MCP6S91 to the value passed in.
  */
-void SetMcp6S91Gain(uint8_t gain) {
+void SetMcp6S91Gain(uint8_t gan) {
 	SPI1SendByte(MCP6S91_GAIN_CMD);
-	SPI1SendByte(gain);
+	SPI1SendByte(gan);
 }
 
 /* 
@@ -59,7 +59,8 @@ void Mcp6S91Init(void) {
 	SPI1Init();
 	SPI1SendByte(MCP6S91_CHANNEL_CMD);
 	SPI1SendByte(0x00);
-	SetMcp6S91Gain(MCP6S91_GAIN_2);
+	gain = MCP6S91_GAIN_1;
+	SetMcp6S91Gain(gain);
 }
 
 /*
@@ -70,12 +71,12 @@ void Mcp6S91Init(void) {
 void Mcp6S91AutoAdjust(void) {
 	if (Ipk > 530 && gain != MCP6S91_GAIN_1) {
 		gain = MCP6S91_GAIN_1;
-		SetMcp6S91Gain(MCP6S91_GAIN_1);			
+		SetMcp6S91Gain(gain);			
 	} else if (Ipk > 265 && gain != MCP6S91_GAIN_2) {
 		gain = MCP6S91_GAIN_2;
-		SetMcp6S91Gain(MCP6S91_GAIN_2);
+		SetMcp6S91Gain(gain);
 	} else if (Ipk > 130 && gain != MCP6S91_GAIN_4) {
 		gain = MCP6S91_GAIN_4;
-		SetMcp6S91Gain(MCP6S91_GAIN_4);
+		SetMcp6S91Gain(gain);
 	}
 }
