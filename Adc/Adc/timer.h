@@ -23,6 +23,7 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include "usart.h"
+#include "spi.h"
 
 // global variable to count the number of overflows
 volatile uint8_t tot0_overflow;

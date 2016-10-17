@@ -33,9 +33,8 @@ volatile float sumV;
 volatile float total_sumV;
 volatile float Vrms;
 
-volatile float sumI;
-volatile float total_sumI;
-volatile float Irms;
+volatile int32_t maxI;
+volatile int32_t total_maxI;
 
 volatile float sumP;
 volatile float total_sumP;
@@ -47,8 +46,7 @@ volatile int16_t total_numberOfSamples;
 volatile int32_t filteredV;
 volatile int32_t filteredI;
 
-volatile int32_t offsetI;
-volatile int32_t offsetV;
+volatile int32_t offset;
 volatile uint8_t flashRate;
 
 void AlgInit();

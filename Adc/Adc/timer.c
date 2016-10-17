@@ -26,7 +26,7 @@ void Timer0Init() {
 	DDRB |= (1 << 2);
 	sei();
 	tot0_overflow = 0;
-	Irms = 0.80;
+	Ipk = 800;
 	Vrms = 12.00;
 	realPower = 9.60;
 }

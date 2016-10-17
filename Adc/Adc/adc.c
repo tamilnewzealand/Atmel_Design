@@ -84,11 +84,11 @@ ISR (ANALOG_COMP_vect) {
 	if (cyclecount > 100) {
 		total_numberOfSamples = numberOfSamples;
 		total_sumV = sumV;
-		total_sumI = sumI;
+		total_maxI = maxI;
 		total_sumP = sumP;
 		cyclecount = 0;
 		sumV = 0;
-		sumI = 0;
+		maxI = 0;
 		sumP = 0;
 		numberOfSamples = 0;
 	}

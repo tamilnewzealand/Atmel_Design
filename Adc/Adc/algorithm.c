@@ -32,11 +32,10 @@ void AlgInit() {
 
 	filteredI = 0;
 	sumV = 0;
-	sumI = 0;
+	maxI = 0;
 	sumP = 0;
 	numberOfSamples = 0;
-	offsetV = 392;
-	offsetI = 512;
+	offset = 512;
 }
 
 /*
@@ -51,8 +50,8 @@ void AlgInit() {
  * temporary accumulator.
  */
 void VoltCalc() {	
-    filteredV = analog_input - offsetI;
-	filteredV -= (int32_t)((filteredI >> 3));
+    filteredV = analog_input - offset;
+	//filteredV -= (uint32_t)(filteredI >> 2);
 	sumV += filteredV * filteredV;
 }
 
@@ -61,44 +60,42 @@ void VoltCalc() {
  * Squared values are then added to the accumulators.
  */
 void AmpCalc() {
-	filteredI = analog_input - offsetI;
-	sumI += filteredI * filteredI;
+	filteredI = analog_input - offset;
+	
+	if (filteredI > maxI) maxI = filteredI;
+	
 	sumP += filteredV * filteredI;
 	numberOfSamples++;
 }
 
 /*
  * This section of the algorithm is polled every 1 second. 
- * Calculates the Vrms, Irms, Ipk, realPower values.
+ * Calculates the Vrms, Ipk, realPower values.
  * Also controls the 4 LED bar based on power values.
  */
 void PostLoopCalc() {		
 	Vrms = sqrt(total_sumV / total_numberOfSamples);
 	Vrms *= (float)0.0483871; // 49.5 / 1023
-	Vrms = 0.447*Vrms + 7.5071; // Works only at mid resistance
-	
-	Irms = sqrt(total_sumI / total_numberOfSamples);
-	Irms *= (float)0.057501; //0.00462366; //4.73 / 1023
-	
-	Ipk = Irms * 5;
-	Ipk = 0.0004*Ipk*Ipk*Ipk-0.1531*Ipk*Ipk + 24.94*Ipk - 1048.9;
+	Vrms += 0.2;
 
-	realPower = (float)0.00022373 * total_sumP / (float)total_numberOfSamples;
+	Ipk = total_maxI * (float)0.0549478;
+
+	realPower = (float)0.00278231 * total_sumP / (float)total_numberOfSamples;
 	
-	if (realPower > 6.375) {
-		flashRate = 3;
+	if (realPower > 4.875) {
+		flashRate = 90;
 		PORTD |= (1 << 2);
 		PORTD |= (1 << 3);
 		PORTD |= (1 << 4);
 		PORTE |= (1 << 0);
-	} else if (realPower > 4.25) {
-		flashRate = 2;
+	} else if (realPower > 3.25) {
+		flashRate = 60;
 		PORTD |= (1 << 2);
 		PORTD |= (1 << 3);
 		PORTD |= (1 << 4);
 		PORTE &=~ (1 << 0);
-	} else if (realPower > 2.125) {
-		flashRate = 1;
+	} else if (realPower > 1.625) {
+		flashRate = 30;
 		PORTD |= (1 << 2);
 		PORTD |= (1 << 3);
 		PORTD &=~ (1 << 4);
