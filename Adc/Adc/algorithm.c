@@ -32,7 +32,7 @@ void AlgInit() {
 
 	filteredI = 0;
 	sumV = 0;
-	maxI = 0;
+	maxI = 1;
 	sumP = 0;
 	numberOfSamples = 0;
 	offset = 512;
@@ -51,7 +51,6 @@ void AlgInit() {
  */
 void VoltCalc() {	
     filteredV = analog_input - offset;
-	//filteredV -= (uint32_t)(filteredI >> 2);
 	sumV += filteredV * filteredV;
 }
 
@@ -78,9 +77,9 @@ void PostLoopCalc() {
 	Vrms *= (float)0.0483871; // 49.5 / 1023
 	Vrms += 0.2;
 
-	Ipk = total_maxI * (float)0.0549478;
+	Ipk = total_maxI * (float)0.39312039;
 
-	realPower = (float)0.00278231 * total_sumP / (float)total_numberOfSamples;
+	realPower = (float)0.01902196 * (float)(total_sumP / total_numberOfSamples);
 	
 	if (realPower > 4.875) {
 		flashRate = 90;

@@ -88,7 +88,7 @@ ISR (ANALOG_COMP_vect) {
 		total_sumP = sumP;
 		cyclecount = 0;
 		sumV = 0;
-		maxI = 0;
+		maxI = 1;
 		sumP = 0;
 		numberOfSamples = 0;
 	}
