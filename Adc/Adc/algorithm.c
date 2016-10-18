@@ -39,13 +39,6 @@ void AlgInit() {
 }
 
 /*
- * Low Pass filter is used to remove the DC Offset present in the signal.
- * To increase efficiency an ADC reading of the buffered 1V65 line is used
- * as the initial value of this filter.
- *
- * Filter below is based on ideas from:
- * http://openenergymonitor.org/emon/buildingblocks/digital-filters-for-offset-removal
- *
  * After filtering of the DC offset, the value is squared and added to a
  * temporary accumulator.
  */
@@ -56,7 +49,8 @@ void VoltCalc() {
 
 /*
  * Uses same offset value as used for the Voltage to remove the DC offset.
- * Squared values are then added to the accumulators.
+ * Current value is compared with current max and updated if necessary.
+ * Voltage x Current value is added to the power accumulator.
  */
 void AmpCalc() {
 	filteredI = analog_input - offset;
@@ -74,33 +68,39 @@ void AmpCalc() {
  */
 void PostLoopCalc() {		
 	Vrms = sqrt(total_sumV / total_numberOfSamples);
-	Vrms *= (float)0.0483871; // 49.5 / 1023
+	Vrms *= (float)0.0483871;
 	Vrms += 0.2;
-
-	Ipk = total_maxI * (float)0.39312039;
-
-	realPower = (float)0.01902196 * (float)(total_sumP / total_numberOfSamples);
 	
-	if (realPower > 4.875) {
-		flashRate = 90;
+	old_maxI = total_maxI;
+	Ipk = total_maxI * (float)0.65062;
+	Ipk = 3.3005 * Ipk + 14.612;
+	//Ipk /= gain;
+	
+	realPower = (float)0.00001902196 * (float)(total_sumP / total_numberOfSamples);
+	realPower = realPower / 2.76595745;
+	realPower = 13.092*realPower + 0.2853;
+	realPower = 1.0455*realPower - 0.1614;
+	
+	if (realPower > 6.375) {
+		flashRate = 0;
 		PORTD |= (1 << 2);
 		PORTD |= (1 << 3);
 		PORTD |= (1 << 4);
 		PORTE |= (1 << 0);
-	} else if (realPower > 3.25) {
-		flashRate = 60;
+	} else if (realPower > 4.25) {
+		flashRate = 15;
 		PORTD |= (1 << 2);
 		PORTD |= (1 << 3);
 		PORTD |= (1 << 4);
 		PORTE &=~ (1 << 0);
-	} else if (realPower > 1.625) {
-		flashRate = 30;
+	} else if (realPower > 2.125) {
+		flashRate = 8;
 		PORTD |= (1 << 2);
 		PORTD |= (1 << 3);
 		PORTD &=~ (1 << 4);
 		PORTE &=~ (1 << 0);
 	} else {
-		flashRate = 0;
+		flashRate = 5;
 		PORTD |= (1 << 2);
 		PORTD &=~ (1 << 3);
 		PORTD &=~ (1 << 4);

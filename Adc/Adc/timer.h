@@ -31,8 +31,9 @@ volatile uint8_t tot1_overflow;
 volatile uint8_t tot2_overflow;
 
 void Timer0Init();
-ISR(TIMER0_OVF_vect);
 void Timer1Init();
 ISR(TIMER1_OVF_vect);
+void Timer2Init();
+ISR(TIMER2_OVF_vect);
 
 #endif /* TIMER_H_ */

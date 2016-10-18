@@ -32,6 +32,7 @@ volatile uint16_t analog_input;
 volatile float sumV;
 volatile float total_sumV;
 volatile float Vrms;
+volatile float Ipk;
 
 volatile int32_t maxI;
 volatile int32_t total_maxI;

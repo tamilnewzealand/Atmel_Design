@@ -59,8 +59,8 @@ void Mcp6S91Init(void) {
 	SPI1Init();
 	SPI1SendByte(MCP6S91_CHANNEL_CMD);
 	SPI1SendByte(0x00);
-	gain = MCP6S91_GAIN_1;
-	SetMcp6S91Gain(gain);
+	gain = 1;
+	SetMcp6S91Gain(MCP6S91_GAIN_1);
 }
 
 /*
@@ -69,14 +69,29 @@ void Mcp6S91Init(void) {
  * function.
  */
 void Mcp6S91AutoAdjust(void) {
-	if (Ipk > 530 && gain != MCP6S91_GAIN_1) {
-		gain = MCP6S91_GAIN_1;
-		SetMcp6S91Gain(gain);			
-	} else if (Ipk > 265 && gain != MCP6S91_GAIN_2) {
-		gain = MCP6S91_GAIN_2;
-		SetMcp6S91Gain(gain);
-	} else if (Ipk > 130 && gain != MCP6S91_GAIN_4) {
-		gain = MCP6S91_GAIN_4;
-		SetMcp6S91Gain(gain);
+	if (old_maxI > 900) {
+		if (gain == 8) {
+			SetMcp6S91Gain(MCP6S91_GAIN_4);
+			gain = 4;
+		} else if (gain == 4) {
+			SetMcp6S91Gain(MCP6S91_GAIN_2);
+			gain = 2;
+		} else if (gain == 2) {
+			SetMcp6S91Gain(MCP6S91_GAIN_1);
+			gain = 1;
+		}
+	}
+	
+	if (old_maxI < (890 - (512/gain))) {
+		if (gain == 1) {
+			SetMcp6S91Gain(MCP6S91_GAIN_2);
+			gain = 2;
+		} else if (gain == 2) {
+			SetMcp6S91Gain(MCP6S91_GAIN_4);
+			gain = 4;
+		} else if (gain == 4) {
+			SetMcp6S91Gain(MCP6S91_GAIN_8);
+			gain = 8;
+		}
 	}
 }

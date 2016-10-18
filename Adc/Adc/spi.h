@@ -35,8 +35,8 @@
 #define MCP6S91_GAIN_16   6
 #define MCP6S91_GAIN_32   7
 
-volatile float Ipk;
 uint8_t gain;
+volatile int32_t old_maxI;
 
 void SPI1Init (void);
 void SPI1SendByte(uint8_t data);

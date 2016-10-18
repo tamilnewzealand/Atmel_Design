@@ -22,7 +22,6 @@
 #include "spi.h"
 #include "timer.h"
 #include "algorithm.h"
-#include <stdio.h>
 	
 int main(void) {
 	_delay_ms(1);
@@ -32,12 +31,12 @@ int main(void) {
 	USART0Init();
 	Timer1Init();
 	Timer0Init();
+	Timer2Init();
 	InitComp();
 	while(1) {
 		if (TIFR0 & (1<<TOV0)) {
 			TIFR0 = (1<<TOV0);
 			tot0_overflow++;
-			PORTB ^= (1 << 2);
 			if (tot0_overflow < 85) {
 				USART0TransmitNumber(Ipk, 0);
 				} else if (tot0_overflow < 170) {
