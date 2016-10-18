@@ -65,6 +65,10 @@ void Timer2Init() {
 	TIMSK2 |= (1 << TOIE2);	
 }
 
+/*
+ * Timer 2 Overflow Interrupt handler. Increments overflow counter.
+ * Toggles Blinking LED after flashRate number of overflows.
+ */
 ISR(TIMER2_OVF_vect) {
 	tot2_overflow++;
 	if (tot2_overflow >= flashRate) {
