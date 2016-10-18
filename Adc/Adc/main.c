@@ -34,6 +34,10 @@ int main(void) {
 	Timer2Init();
 	InitComp();
 	while(1) {
+		/*
+		 * Polling loop based on Timer 0 for USART transmission.
+		 * Transmits the various parameters based on overflow counter.
+		 */
 		if (TIFR0 & (1<<TOV0)) {
 			TIFR0 = (1<<TOV0);
 			tot0_overflow++;
@@ -46,6 +50,10 @@ int main(void) {
 			}
 			if (tot0_overflow == 255) tot0_overflow = 0;
 		}
+		/*
+		 * Polls timer 1 and calls PostLoopCalc function
+		 * once every second.
+		 */
 		if (tot1_overflow >= 3) {
 			tot1_overflow = 0;
 			PostLoopCalc();

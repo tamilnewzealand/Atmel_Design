@@ -26,7 +26,6 @@
 void Timer0Init() {
 	TCCR0B |= (1 << CS02);
 	TCNT0 = 0;
-	//TIMSK0 |= (1 << TOIE0);
 	DDRB |= (1 << 2);
 	sei();
 	tot0_overflow = 0;
@@ -44,7 +43,6 @@ void Timer1Init() {
 	TCCR1B |= (1 << CS11)|(1 << CS10);
 	TCNT1 = 0;
 	TIMSK1 |= (1 << TOIE1);
-	sei();
 	tot1_overflow = 0;
 }
 

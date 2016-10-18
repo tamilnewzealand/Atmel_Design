@@ -27,15 +27,10 @@
  * and enables interrupts.
 */
 void InitADC() {
-	// Select Vref to internal AREF
 	ADMUX |= (1<<REFS0);
-	
-	//set prescaller to 32 and enable ADC
 	ADCSRA |= (1<<ADPS2)|(1<<ADPS0)|(1<<ADEN)|(1<<ADIE);
-	
 	isr_chan = V_Filter;
 	count = 0;
-	
 	ADCSRA |= (1<<ADSC);
 	sei();
 }
